@@ -1,4 +1,6 @@
 TODO = 'finish implementing the range for my_each'.freeze
+# rubocop: disable Metrics/ModuleLength
+# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
 module Enumerable
   # @return [Enumerable]
@@ -44,50 +46,101 @@ module Enumerable
       results = {}
       my_each { |k, v| results[k] = v if yield k, v }
     end
+    results
   end
 
-  def my_any?
-    if !self[0].nil?
-      my_each { |x| return true if self[0] == x }
+  def my_any?(args = nil)
+
+    if block_given? && (args = nil)
+      my_each { |x| return true if yield(x) }
     elsif block_given?
-      my_each { |item| return true if yield(item) }
+      my_each { |x| return true if yield(x) }
     else
-      my_each { |item| return true if item }
+      my_each { |x| return true if x }
     end
     false
   end
 
-  def my_map(&block)
+  def my_map(&proc)
     return to_enum :my_map unless block_given?
 
     results = []
-    my_each { |x| results << block.call(x) }
+    my_each { |x| results << proc.call(x) }
+    results
   end
+
+  def my_all?(*ele)
+    if block_given?
+      my_each { |i| return false unless yield(i) }
+    elsif !ele[0].nil?
+      my_each { |i| return false unless ele[0] === i }
+    else
+      my_each { |i| return false unless i }
+    end
+    true
+  end
+
+  def my_count(args = nil)
+    counter = 0
+    if block_given?
+      my_each { |x| counter += 1 if yield(x) }
+    elsif !args.nil?
+      my_each { |x| counter += 1 if args == x }
+    else
+      counter = length
+    end
+    counter
+  end
+
+  def my_none?(args = nil)
+    block_is_true = true
+    if block_given?
+      my_each { |x| block_is_true = false if yield(x) }
+    elsif args.is_a? Regexp
+      my_each { |x| block_is_true = false if x.match(args) }
+    elsif args.is_a? Module
+      my_each { |x| block_is_true = false if x.is_a?(args) }
+    elsif !block_given?
+      my_each { |x| block_is_true = false if x == true }
+    else
+      my_each { |x| block_is_true = false if x.nil? || x == false }
+    end
+    block_is_true
+  end
+
+
+
+
 
 end
 
-list = [1, 3, 4, 6, 78, 9]
-r_list = (1..10)
-myhash = { one: 'one', two: 'two', three: 'three' }
+# puts %w[ant bear cat].my_all? { |word| word.length >= 3 } #=> true
+# puts %w[ant bear cat].my_all? { |word| word.length >= 4 } #=> false
+# puts %w[ant bear cat].my_all?(/t/)                        #=> false
+# puts [1, 2i, 3.14].my_all?(Numeric)                       #=> true
+# puts [nil, true, 99].my_all?                              #=> false
+# puts [].my_all?
+#
+# %w[ant bear cat].my_all? { |word| word.length >= 3 } #=> true
+# %w[ant bear cat].my_all? { |word| word.length >= 4 } #=> false
+# %w[ant bear cat].my_all?(/t/)                        #=> false
+# [1, 2i, 3.14].my_all?(Numeric)                       #=> true
+# [nil, true, 99].my_all?                              #=> false
+# [].my_all?
 
-# strings = %w[bill paul dan me mikey]
-# r_list.my_each { |x| puts x }
-puts
-# list.my_each { |x| puts x }
-puts
-# r_list.my_each_with_index {|k,v| puts "#{k}: #{v}"}
-# r_list.each { |x| puts x }
+# puts [1,2,3,4,5].my_select { |num|  num.even?  }   #=> [2, 4]
+# puts (1..4).my_map { |i| i*i }      #=> [1, 4, 9, 16]
 
-# strings.select { |x| puts x if x.size > 3 }
-# puts
-# r_list.select { |x| puts x if x > 1 }
+# ary = [1, 2, 4, 2]
+# puts ary.my_count               #=> 4
+# puts ary.my_count(2)            #=> 2
+# puts ary.my_count { |x| x%2==0 } #=> 3
 
-# list.my_map { |x| puts x * 2 }
-r_list.my_map { |k, v| puts [k.to_s, v] }
-
-
-
-
-
-
-
+puts %w{ant bear cat}.my_none? { |word| word.length == 5 } #=> true
+puts %w{ant bear cat}.my_none? { |word| word.length >= 4 } #=> false
+puts %w{ant bear cat}.my_none?(/d/)                        #=> true
+puts [1, 3.14, 42].my_none?(Float)                         #=> false
+puts [1].my_none?                                           #=> true
+puts [nil].my_none?                                        #=> true
+puts [nil, false].my_none?                                 #=> true
+puts [nil, false, true].my_none?                           #=> false
