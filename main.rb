@@ -49,7 +49,7 @@ module Enumerable
     results
   end
 
-  def my_any?(args = nil)
+  def my_any?
     block_is_true = true
     if block_given?
       my_each { |x| block_is_true = false unless yield(x) }
@@ -109,39 +109,22 @@ module Enumerable
     block_is_true
   end
 
+  def my_inject(*args)
+    return to_enum :my_inject unless block_given?
 
+    check = args.size.positive?
+    acc = check ? args[0] : self[0]
 
+    my_each do |x|
+      acc = yield(acc, x)
+    end
+    acc
+  end
 
+  def multiply_els
+    inject { |result, num| result * num }
+  end
 
+  # rubocop: enable Metrics/ModuleLength
+  # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 end
-
-# puts %w[ant bear cat].my_all? { |word| word.length >= 3 } #=> true
-# puts %w[ant bear cat].my_all? { |word| word.length >= 4 } #=> false
-# puts %w[ant bear cat].my_all?(/t/)                        #=> false
-# puts [1, 2i, 3.14].my_all?(Numeric)                       #=> true
-# puts [nil, true, 99].my_all?                              #=> false
-# puts [].my_all?                                           #=> true
-
-puts %w[ant bear cat].any? { |word| word.length >= 3 } #=> true
-puts %w[ant bear cat].any? { |word| word.length >= 4 } #=> true
-puts %w[ant bear cat].any?(/d/)                        #=> false
-puts [nil, true, 99].any?(Integer)                     #=> true
-puts [nil, false, 99].any?                              #=> true
-puts [].any?                                           #=> false
-
-# puts [1,2,3,4,5].my_select { |num|  num.even?  }   #=> [2, 4]
-# puts (1..4).my_map { |i| i*i }      #=> [1, 4, 9, 16]
-
-# ary = [1, 2, 4, 2]
-# puts ary.my_count               #=> 4
-# puts ary.my_count(2)            #=> 2
-# puts ary.my_count { |x| x%2==0 } #=> 3
-
-# puts %w{ant bear cat}.my_none? { |word| word.length == 5 } #=> true
-# puts %w{ant bear cat}.my_none? { |word| word.length >= 4 } #=> false
-# puts %w{ant bear cat}.my_none?(/d/)                        #=> true
-# puts [1, 3.14, 42].my_none?(Float)                         #=> false
-# puts [1].my_none?                                           #=> true
-# puts [nil].my_none?                                        #=> true
-# puts [nil, false].my_none?                                 #=> true
-# puts [nil, false, true].my_none?                           #=> false
