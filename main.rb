@@ -3,7 +3,6 @@ TODO = 'finish implementing the range for my_each'.freeze
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
 module Enumerable
-  # @return [Enumerable]
   def my_each
     return to_enum :my_each unless block_given?
 
@@ -49,10 +48,16 @@ module Enumerable
     results
   end
 
-  def my_any?
-    block_is_true = true
-    if block_given?
-      my_each { |x| block_is_true = false unless yield(x) }
+  def my_any?(args = nil)
+    block_is_true = false
+    if block_given? && args.nil?
+      my_each { |x| block_is_true = true if yield(x) }
+    elsif args.is_a? Regexp
+      my_each { |x| block_is_true = true if x.match(args) }
+    elsif args.is_a? Module
+      my_each { |x| block_is_true = true if x.is_a?(args) }
+    else
+      my_each { |x| block_is_true = true if x.nil? || x == false }
     end
     block_is_true
   end
@@ -73,10 +78,10 @@ module Enumerable
       my_each { |x| block_is_true = false unless x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = false unless x.is_a?(args) }
-    elsif !block_given?
-      my_each { |x| block_is_true = false unless x == true }
+    elsif !block_given? || args.nil?
+      my_each { |x| block_is_true = true unless x.nil? || x == false }
     else
-      my_each { |x| block_is_true = false unless x.nil? || x == false }
+      my_each { |x| block_is_true = false unless x == true }
     end
     block_is_true
   end
@@ -104,12 +109,12 @@ module Enumerable
     elsif !block_given?
       my_each { |x| block_is_true = false if x == true }
     else
-      my_each { |x| block_is_true = false if x.nil? || x == false }
+      my_each { |x| block_is_true = false unless x.nil? || x == false }
     end
     block_is_true
   end
 
-  def my_inject(*args)
+  def my_inject(args = nil)
     return to_enum :my_inject unless block_given?
 
     check = args.size.positive?
@@ -122,7 +127,7 @@ module Enumerable
   end
 
   def multiply_els
-    inject { |result, num| result * num }
+    my_inject { |result, num| result * num }
   end
 
   # rubocop: enable Metrics/ModuleLength
