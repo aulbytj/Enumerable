@@ -49,12 +49,14 @@ module Enumerable
 
   def my_any?(args = nil)
     block_is_true = false
-    if block_given? && args.nil?
+    if block_given?
       my_each { |x| block_is_true = true if yield(x) }
     elsif args.is_a? Regexp
       my_each { |x| block_is_true = true if x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = true if x.is_a?(args) }
+    elsif !block_given? || args.nil?
+      my_each { |x| block_is_true = true unless x.nil? || x == false }
     else
       my_each { |x| block_is_true = true if x.nil? || x == false }
     end
@@ -78,7 +80,7 @@ module Enumerable
     elsif args.is_a? Module
       my_each { |x| block_is_true = false unless x.is_a?(args) }
     elsif !block_given? || args.nil?
-      my_each { |x| block_is_true = true unless x.nil? || x == false }
+      my_each { |x| block_is_true = false unless x.nil? || x == false }
     else
       my_each { |x| block_is_true = false unless x == true }
     end
@@ -105,10 +107,10 @@ module Enumerable
       my_each { |x| block_is_true = false if x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = false if x.is_a?(args) }
-    elsif !block_given?
-      my_each { |x| block_is_true = false if x == true }
-    else
+    elsif !block_given? || args.nil?
       my_each { |x| block_is_true = false unless x.nil? || x == false }
+    else
+      my_each { |x| block_is_true = false unless x == false }
     end
     block_is_true
   end
@@ -138,3 +140,4 @@ module Enumerable
   # rubocop: enable Metrics/ModuleLength
   # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 end
+
