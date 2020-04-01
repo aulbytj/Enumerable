@@ -1,4 +1,3 @@
-TODO = 'finish implementing the range for my_each'.freeze
 # rubocop: disable Metrics/ModuleLength
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
@@ -114,17 +113,23 @@ module Enumerable
     block_is_true
   end
 
-  def my_inject(args = nil)
-    return to_enum :my_inject unless block_given?
+  def my_inject(initial = nil, second = nil)
+    arr = is_a?(Array) ? self : to_a
+    sym = initial if initial.is_a?(Symbol) || initial.is_a?(String)
+    acc = initial if initial.is_a? Integer
 
-    check = args.size.positive?
-    acc = check ? args[0] : self[0]
+    if initial.is_a?(Integer)
+      sym = second if second.is_a?(Symbol) || second.is_a?(String)
+    end
 
-    my_each do |x|
-      acc = yield(acc, x)
+    if sym
+      arr.my_each { |x| acc = acc ? acc.send(sym, x) : x }
+    elsif block_given?
+      arr.my_each { |x| acc = acc ? yield(acc, x) : x }
     end
     acc
   end
+  alias my_reduce my_inject
 
   def multiply_els
     my_inject { |result, num| result * num }
