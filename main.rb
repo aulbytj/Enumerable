@@ -108,7 +108,7 @@ module Enumerable
     elsif args.is_a? Module
       my_each { |x| block_is_true = false if x.is_a?(args) }
     elsif args.nil?
-      my_each { |x| block_is_true = false if x.nil? || x == false }
+      my_each { |x| block_is_true = false unless x.nil? || x == false }
     else
       my_each { |x| block_is_true = false if x == false }
     end
@@ -140,3 +140,9 @@ module Enumerable
   # rubocop: enable Metrics/ModuleLength
   # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 end
+
+array = [nil, false , nil, false]
+p array.my_none? == array.none?
+
+puts array.none?
+puts array.my_none?
