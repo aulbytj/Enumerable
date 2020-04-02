@@ -140,9 +140,3 @@ module Enumerable
   # rubocop: enable Metrics/ModuleLength
   # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 end
-
-array = [nil, false , nil, false]
-p array.my_none? == array.none?
-
-puts array.none?
-puts array.my_none?
