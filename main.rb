@@ -55,7 +55,7 @@ module Enumerable
       my_each { |x| block_is_true = true if x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = true if x.is_a?(args) }
-    elsif !block_given? || args.nil?
+    elsif args.nil?
       my_each { |x| block_is_true = true unless x.nil? || x == false }
     else
       my_each { |x| block_is_true = true if x.nil? || x == false }
@@ -79,10 +79,10 @@ module Enumerable
       my_each { |x| block_is_true = false unless x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = false unless x.is_a?(args) }
-    elsif !block_given? || args.nil?
-      my_each { |x| block_is_true = false unless x.nil? || x == false }
+    elsif args.nil?
+      my_each { |x| block_is_true = false if x.nil? || !x }
     else
-      my_each { |x| block_is_true = false unless x == true }
+      my_each { |x| block_is_true = false unless x == args }
     end
     block_is_true
   end
@@ -107,10 +107,10 @@ module Enumerable
       my_each { |x| block_is_true = false if x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = false if x.is_a?(args) }
-    elsif !block_given? || args.nil?
-      my_each { |x| block_is_true = false unless x.nil? || x == false }
+    elsif args.nil?
+      my_each { |x| block_is_true = false if x.nil? || x == false }
     else
-      my_each { |x| block_is_true = false unless x == false }
+      my_each { |x| block_is_true = false if x == false }
     end
     block_is_true
   end
