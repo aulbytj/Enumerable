@@ -55,7 +55,7 @@ module Enumerable
       my_each { |x| block_is_true = true if yield(x) }
     elsif args.is_a? Regexp
       my_each { |x| block_is_true = true if x.match(args) }
-    elsif args.is_a? Range
+    elsif args.is_a? Module
       my_each { |x| block_is_true = true if x.is_a?(args) }
     else
       my_each { |x| block_is_true = true if x == args }
@@ -140,3 +140,12 @@ end
 def multiply_els(arr)
   arr.my_inject { |result, num| result * num }
 end
+
+
+# my_any? identical and returns the same thing as ruby's any?. (Screenshot from Odin)
+# when a class is passed as an argument returns true if at least one of the collection is a member of such class
+
+
+p [1, 2, 3].my_any?(Integer) #should return true
+p [1, 'demo', false].my_any?(Integer) #should return true
+p ['demo', false, nil].my_any?(Integer) #should return false
