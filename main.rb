@@ -49,38 +49,38 @@ module Enumerable
 
   def my_any?(args = nil)
     block_is_true = false
-    if block_given?
+    if args.nil? && !block_given?
+      my_each { |x| block_is_true = true unless x.nil? || !x }
+    elsif args.nil?
       my_each { |x| block_is_true = true if yield(x) }
     elsif args.is_a? Regexp
       my_each { |x| block_is_true = true if x.match(args) }
-    elsif args.is_a? Module
+    elsif args.is_a? Range
       my_each { |x| block_is_true = true if x.is_a?(args) }
-    elsif args.nil?
-      my_each { |x| block_is_true = true unless x.nil? || x == false }
     else
-      my_each { |x| block_is_true = true if x.nil? || x == false }
+      my_each { |x| block_is_true = true if x == args }
     end
     block_is_true
   end
 
-  def my_map(&proc)
+  def my_map(proc = nil)
     return to_enum :my_map unless block_given?
 
     results = []
-    my_each { |x| results << proc.call(x) }
+    my_each { |x| results << (proc ? proc.call(x) : yield(x)) }
     results
   end
 
   def my_all?(args = nil)
     block_is_true = true
-    if block_given?
+    if args.nil? && !block_given?
+      my_each { |x| block_is_true = false if x.nil? || !x }
+    elsif args.nil?
       my_each { |x| block_is_true = false unless yield(x) }
     elsif args.is_a? Regexp
       my_each { |x| block_is_true = false unless x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = false unless x.is_a?(args) }
-    elsif args.nil?
-      my_each { |x| block_is_true = false if x.nil? || !x }
     else
       my_each { |x| block_is_true = false unless x == args }
     end
@@ -101,16 +101,16 @@ module Enumerable
 
   def my_none?(args = nil)
     block_is_true = true
-    if block_given?
+    if args.nil? && !block_given?
+      my_each { |x| block_is_true = false if x == true }
+    elsif args.nil?
       my_each { |x| block_is_true = false if yield(x) }
     elsif args.is_a? Regexp
       my_each { |x| block_is_true = false if x.match(args) }
     elsif args.is_a? Module
       my_each { |x| block_is_true = false if x.is_a?(args) }
-    elsif args.nil?
-      my_each { |x| block_is_true = false unless x.nil? || x == false }
     else
-      my_each { |x| block_is_true = false if x == false }
+      my_each { |x| block_is_true = false if x == args }
     end
     block_is_true
   end
@@ -132,11 +132,11 @@ module Enumerable
     acc
   end
   alias my_reduce my_inject
+end
 
-  def multiply_els
-    my_inject { |result, num| result * num }
-  end
+# rubocop: enable Metrics/ModuleLength
+# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
-  # rubocop: enable Metrics/ModuleLength
-  # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+def multiply_els(arr)
+  arr.my_inject { |result, num| result * num }
 end
