@@ -41,16 +41,16 @@ Layout/MultilineMethodCallIndentation:
   Enabled: true
   EnforcedStyle: indented
 Layout/SpaceAroundMethodCallOperator:
-    Enabled: false
+  Enabled: false
 Lint/RaiseException:
-    Enabled: false
+  Enabled: false
 Lint/StructNewOverride:
-    Enabled: false
+  Enabled: false
 Style/ExponentialNotation:
-    Enabled: false
+  Enabled: false
 Style/HashEachMethods:
-    Enabled: false
+  Enabled: false
 Style/HashTransformKeys:
-    Enabled: false
+  Enabled: false
 Style/HashTransformValues:
-    Enabled: false
+  Enabled: false
