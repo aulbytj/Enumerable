@@ -26,7 +26,7 @@ describe Enumerable do
     it 'should return the indexes' do
       hash = {}
       %w[cat dog fish].my_each_with_index { |v, i| hash[v] = i }
-      expect(hash).to(eq({ "cat" => 0, "dog" => 1, "fish" => 2 }))
+      expect(hash).to(eq({ 'cat' => 0, 'dog' => 1, 'fish' => 2 }))
     end
   end
 
@@ -84,7 +84,7 @@ describe Enumerable do
 
   describe '#my_inject' do
     it 'should returnn 45' do
-      expect((5..10).reduce { |sum, n| sum + n }).to(eq(45))
+      expect((5..10).reduce { |acc, elem| acc + elem }).to(eq(45))
     end
 
     it 'should return sheep' do
