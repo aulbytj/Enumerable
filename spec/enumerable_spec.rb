@@ -24,9 +24,9 @@ describe Enumerable do
     end
 
     it 'should return the indexes' do
-      hash = {}
-      %w[cat dog fish].my_each_with_index { |v, i| hash[v] = i }
-      expect(hash).to(eq({ 'cat' => 0, 'dog' => 1, 'fish' => 2 }))
+      array = []
+      %w[cat dog fish].my_each_with_index { |_word, idx| array[idx] = idx }
+      expect(array).to(eq([0, 1, 2]))
     end
   end
 
