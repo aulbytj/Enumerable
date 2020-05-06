@@ -132,9 +132,9 @@ module Enumerable
   end
   alias my_reduce my_inject
 end
-
 # rubocop: enable Metrics/ModuleLength
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+
 def multiply_els(arr)
   arr.my_inject { |result, num| result * num }
 end
