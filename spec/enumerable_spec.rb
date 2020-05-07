@@ -138,9 +138,17 @@ describe Enumerable do
     end
   end
 
-  describe '#none' do
+  describe '#my_none?' do
     it 'should return true' do
       expect(bool.my_none?).to(eq(true))
+    end
+
+    it 'should return true' do
+      expect(number_array.my_none?(Float)).to(eq(true))
+    end
+
+    it 'should return false' do
+      expect(string_array.my_none?(/t/)).to(eq(false))
     end
 
     it 'shoudl not return false' do
