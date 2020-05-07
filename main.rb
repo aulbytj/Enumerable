@@ -124,7 +124,7 @@ module Enumerable
     end
 
     if sym
-      arr.my_each { |x| acc = acc ? acc.send(sym, x) : x }
+      arr.my_each { |x| acc = acc ? acc.__send__(sym, x) : x }
     elsif block_given?
       arr.my_each { |x| acc = acc ? yield(acc, x) : x }
     end
