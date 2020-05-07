@@ -51,5 +51,3 @@ Style/MissingElse:
   Enabled: false
 Style/MethodCalledOnDoEndBlock:
   Enabled: false
-Style/DisableCopsWithinSourceCodeDirective:
-  Enabled: false
